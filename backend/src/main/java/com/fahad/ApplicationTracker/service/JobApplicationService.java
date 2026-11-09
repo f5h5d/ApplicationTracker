@@ -9,6 +9,9 @@ import com.fahad.ApplicationTracker.repository.JobApplicationRepository;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +38,10 @@ public class JobApplicationService {
     return jobApplicationRepository.save(application);
   }
 
-  public List<JobApplication> fetchJobApplications() {
-    return jobApplicationRepository.findAll();
+  public Page<JobApplication> fetchJobApplications(int page) {
+    return jobApplicationRepository.findAll(
+      PageRequest.of(page, 10, Sort.by("createdAt", "id").descending())
+    );
   }
 
   public void deleteJobApplication(Long id) {

@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -81,8 +82,10 @@ public class JobApplicationController {
   }
 
   @GetMapping("")
-  public ResponseEntity<List<JobApplication>> fetchJobApplications() {
-    return ResponseEntity.ok(jobApplicationService.fetchJobApplications());
+  public ResponseEntity<Page<JobApplication>> fetchJobApplications(
+    @RequestParam("page") int page
+  ) {
+    return ResponseEntity.ok(jobApplicationService.fetchJobApplications(page));
   }
 
   @DeleteMapping("")
