@@ -1,0 +1,24 @@
+# Figma frontend
+
+- [x] 1. `how` over the affected subsystem.
+  - Existing Next.js App Router, CSS Modules, global color tokens, provider, and request helpers inspected directly. The UI will render static sample data.
+- [x] 2. `architect` for parallel design exploration.
+  - skip: The user supplied the design and explicitly requested the simplest implementation. Keep the existing component structure without alternative implementations.
+- [x] 3. Write the throughput checkpoint as four todo items.
+  - Blocking first steps. Inspect the Figma desktop and mobile frames and existing components before editing.
+  - Independent workstreams. One owner writes the UI. The parent supplies files under public and verifies the result.
+  - Shared mutable state. UI source and downloaded assets have separate owners. No concurrent edits to the same files.
+  - Smallest safe decomposition. One UI owner keeps the responsive layout consistent. No extra libraries or worktrees.
+- [x] 4. Delegate code-writing to a subagent using your configured feature model.
+  - Data shape. A typed constant array holds eight sample applications. Status presentation is a small lookup table. No requests, state, event handlers, or business logic.
+- [ ] 5. Verify on the matching surface.
+  - Compare desktop and mobile application pages and static modal previews to the Figma screenshots. Check lint and types.
+  - Passed. ESLint, TypeScript, diff checks, both HTTP routes, eight dummy rows on each page, and all 22 referenced local icons/fonts. Rendered SVG dimensions match their source files. No fetching, state hooks, or handlers occur in the UI.
+  - Incomplete. Browser visual comparison. Computer Use stopped because it could not verify Chrome's current URL. No further browser automation attempted.
+  - Production build skipped for this static design pass.
+- [x] 6. Rebase into small, ordered commits. Stack follow-ups.
+  - skip: Local UI work only. Preserve existing uncommitted user edits and create no commits.
+- [x] 7. If the design is contested, `interrogate` before shipping.
+  - skip: The supplied design is the target. No competing design decision.
+- [x] 8. Run **Opening a PR**.
+  - skip: The user requested local frontend design, not a PR.

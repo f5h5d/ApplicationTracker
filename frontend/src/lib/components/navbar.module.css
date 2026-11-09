@@ -1,0 +1,56 @@
+﻿.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 64px;
+  padding: 0 36px;
+  background: var(--color-sidebar-background);
+  color: var(--color-sidebar-text);
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.active {
+  background: var(--color-sidebar-surface);
+}
+
+.user {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+}
+
+@media (max-width: 767px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .tabs {
+    gap: 4px;
+  }
+
+  .tab {
+    padding: 0 12px;
+    font-size: 13px;
+  }
+}

@@ -1,26 +1,60 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Inter";
+  src: url("/fonts/inter-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/fonts/dm-sans-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --font-heading: "DM Sans", sans-serif;
+  --color-primary: #3271D7;
+  --color-link: #224A8A;
+  --color-accent: #F1F6FD;
+  --color-background: #F5F5F5;
+  --color-surface: #FFFFFF;
+  --color-text: #1E1E1E;
+  --color-text-secondary: #757575;
+  --color-border: #D9D9D9;
+
+  --color-sidebar-background: #1E1E1E;
+  --color-sidebar-surface: #2C2C2C;
+  --color-sidebar-text: #FFFFFF;
+
+  --color-saved-background: #EFF0F2;
+  --color-saved-text: #525968;
+  --color-applied-background: #E7EDF9;
+  --color-applied-text: #49679D;
+  --color-interview-background: #F7EDD9;
+  --color-interview-text: #86621A;
+  --color-offer-background: #E2EFE4;
+  --color-offer-text: #2F6D41;
+  --color-rejected-background: #F8E8E8;
+  --color-rejected-text: #974747;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+* { box-sizing: border-box; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, p { margin: 0; }
+button, input, textarea { font: inherit; }
+button { border: 0; cursor: default; }
+button:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
 }
