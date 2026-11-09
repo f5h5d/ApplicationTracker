@@ -1,0 +1,486 @@
+﻿.applications {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  margin-bottom: 24px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.filters button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 19px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.filters small {
+  font-size: 11px;
+  line-height: 16px;
+}
+.filters .selectedFilter {
+  background: var(--color-primary);
+  color: var(--color-surface);
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .filters button:not(.selectedFilter):hover {
+    background: var(--color-accent);
+    color: var(--color-link);
+  }
+}
+
+.filters button:nth-child(2) {
+  width: 87px;
+}
+.filters button:nth-child(3) {
+  width: 96px;
+}
+.filters button:nth-child(4) {
+  width: 111px;
+}
+.filters button:nth-child(5) {
+  width: 86px;
+}
+.filters button:nth-child(6) {
+  width: 104px;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 68px;
+  padding: 0 20px;
+  border: 1px solid var(--color-border);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  background: var(--color-surface);
+}
+.search {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 8px;
+  width: 302px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text);
+  background: var(--color-surface);
+}
+.search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 20px;
+}
+.search input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+.sort,
+.pagination button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.sort {
+  width: 136px;
+}
+.pagination button {
+  width: 64px;
+}
+.pagination .previous {
+  width: 88px;
+}
+.table {
+  border: 1px solid var(--color-border);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.headings,
+.row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) 112px 114px 86px 122px 32px;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+}
+.headings {
+  height: 44px;
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 500;
+}
+.row {
+  height: 64px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 12px;
+  line-height: 17px;
+}
+.company {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.monogram {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+}
+.companyText {
+  min-width: 0;
+}
+.companyText h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-link);
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: 600;
+}
+.companyText h2 svg {
+  flex-shrink: 0;
+}
+.companyText p {
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 19px;
+  color: var(--color-text-secondary);
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 17px;
+  font-weight: 500;
+}
+.interview {
+  background: var(--color-interview-background);
+  color: var(--color-interview-text);
+}
+.applied {
+  background: var(--color-applied-background);
+  color: var(--color-applied-text);
+}
+.saved {
+  background: var(--color-saved-background);
+  color: var(--color-saved-text);
+}
+.offer {
+  background: var(--color-offer-background);
+  color: var(--color-offer-text);
+}
+.rejected {
+  background: var(--color-rejected-background);
+  color: var(--color-rejected-text);
+}
+.added {
+  color: var(--color-text-secondary);
+}
+.prep button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 14px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.viewPrep {
+  color: var(--color-link);
+}
+.generate {
+  color: var(--color-text-secondary);
+}
+.generate img {
+  display: none;
+}
+.more {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: transparent;
+}
+.pagination {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 17px;
+}
+.pages {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pagination .previous {
+  color: var(--color-text-secondary);
+}
+.currentPage {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-weight: 500;
+}
+.mobileText,
+.sampleLabel {
+  display: none;
+}
+@media (min-width: 768px) and (max-width: 1270px) {
+  .table {
+    overflow-x: auto;
+  }
+  .headings,
+  .row {
+    min-width: 1000px;
+  }
+}
+@media (max-width: 767px) {
+  .applications {
+    gap: 16px;
+  }
+  .desktopText,
+  .headings {
+    display: none;
+  }
+  .mobileText {
+    display: inline;
+  }
+  .toolbar {
+    grid-row: 1;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .search {
+    flex: 1;
+    width: auto;
+    height: 44px;
+  }
+  .search input {
+    font-size: 16px;
+  }
+  .sort {
+    flex: 0 0 96px;
+    height: 44px;
+    padding: 0 8px;
+  }
+  .filters {
+    height: 44px;
+    margin-bottom: 0;
+  }
+  .filters button {
+    height: 44px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .filters small {
+    font-size: 12px;
+  }
+  .filters button:nth-child(1) {
+    width: 76px;
+  }
+  .filters button:nth-child(2) {
+    width: 98px;
+  }
+  .filters button:nth-child(3) {
+    width: 110px;
+  }
+  .filters button:nth-child(4) {
+    width: 130px;
+  }
+  .filters button:nth-child(5) {
+    width: 98px;
+  }
+  .filters button:nth-child(6) {
+    width: 116px;
+  }
+  .sampleLabel {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    line-height: 16px;
+  }
+  .table {
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+  }
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .row {
+    position: relative;
+    height: auto;
+    min-height: 175px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-surface);
+    grid-template-columns: minmax(0, 1fr) auto 44px;
+    grid-template-areas: "company company status" "semester semester semester" "added prep more";
+    row-gap: 12px;
+    column-gap: 8px;
+  }
+  .company {
+    grid-area: company;
+    gap: 10px;
+    min-height: 45px;
+    padding-right: 42px;
+  }
+  .companyText {
+    min-width: 0;
+    overflow: visible;
+  }
+  .companyText h2 {
+    font-size: 16px;
+    line-height: 23px;
+    white-space: nowrap;
+  }
+  .companyText p {
+    width: 192px;
+    white-space: normal;
+    overflow: visible;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .statusCell {
+    grid-area: status;
+    justify-self: end;
+    align-self: start;
+    margin-top: 10px;
+  }
+  .status {
+    padding: 4px 8px;
+  }
+  .semester {
+    grid-area: semester;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 20px;
+    white-space: nowrap;
+  }
+  .semester > span:last-child {
+    font-weight: 500;
+  }
+  .semester > .mobileText {
+    color: var(--color-text-secondary);
+  }
+  .row::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 68px;
+    height: 1px;
+    background: var(--color-border);
+  }
+  .added {
+    grid-area: added;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 52px;
+    padding-top: 8px;
+  }
+  .added .mobileText {
+    font-size: 11px;
+  }
+  .prep {
+    grid-area: prep;
+    padding-top: 8px;
+  }
+  .prep button {
+    height: 44px;
+    padding: 0 8px;
+    font-size: 16px;
+  }
+  .more {
+    grid-area: more;
+    height: 44px;
+    width: 44px;
+    margin-top: 8px;
+  }
+  .pagination {
+    margin-top: 16px;
+    height: 44px;
+    padding: 0;
+  }
+  .pagination .previous,
+  .currentPage,
+  .secondPage {
+    display: none;
+  }
+  .pagination button {
+    width: 74px;
+    height: 44px;
+  }
+}

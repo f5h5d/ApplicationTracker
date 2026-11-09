@@ -1,0 +1,25 @@
+﻿.container { min-height: 100vh; }
+.main { padding: 36px; }
+.pageHeader { display: flex; align-items: center; justify-content: space-between; height: 76px; margin-bottom: 24px; }
+.title { display: flex; align-items: center; gap: 12px; height: 46px; }
+.title h1 { font: 500 34px/49px var(--font-heading); letter-spacing: -.68px; }
+.title span { display: grid; place-items: center; width: 32px; height: 26px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-surface); color: var(--color-text-secondary); font-size: 12px; font-weight: 500; }
+.pageHeader p { margin-top: 5px; color: var(--color-text-secondary); font-size: 14px; line-height: 20px; }
+.addButton { display: flex; align-items: center; justify-content: center; gap: 8px; width: 176px; height: 38px; padding: 0 12px; border-radius: 8px; background: var(--color-primary); color: var(--color-sidebar-text); font-size: 14px; line-height: 20px; white-space: nowrap; }
+.mobileLabel { display: none; }
+
+@media (max-width: 1100px) and (min-width: 768px) {
+  .main { padding: 28px 24px; }
+}
+
+@media (max-width: 767px) {
+  .main { padding: 16px; }
+  .pageHeader { height: auto; gap: 12px; }
+  .title { height: 32px; gap: 8px; }
+  .title h1 { font-size: 22px; line-height: 32px; letter-spacing: -.44px; }
+  .title span { width: 26px; height: 24px; font-size: 11px; }
+  .pageHeader p { font-size: 13px; line-height: 19px; }
+  .addButton { flex-shrink: 0; width: 82px; height: 44px; }
+  .desktopLabel { display: none; }
+  .mobileLabel { display: inline; }
+}
