@@ -5,67 +5,65 @@ import { ExternalLink, Search } from "lucide-react";
 import styles from "./applications-table.module.css";
 import {
   useFetchJobApplications,
+  useFetchJobApplicationsOverview,
   useFetchSearchedJobApplications,
 } from "@/src/lib/job-applications/queries";
 import { application } from "../types";
 import { useEffect, useState } from "react";
+import { APPLICATIONS_PER_PAGE } from "@/src/lib/constants";
+import ApplicationOptionsMenu from "./ApplicationOptionsMenu";
+import { useDeleteJobApplication } from "@/src/lib/job-applications/mutations";
 
 // type Application = {};
 
 export default function ApplicationsTable() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
-  const { data: applications } = useFetchJobApplications();
-  const { data: searchedApplications } =
-    useFetchSearchedJobApplications(debouncedSearchTerm);
-
-  console.log("searchedApplications", searchedApplications);
+  const [page, setPage] = useState<number>(0);
   const [currentFilter, setCurrentFilter] = useState<string>("ALL");
-  const filteredApplications = (
-    searchedApplications?.length > 0 ? searchedApplications : applications
-  )?.filter((application: application) => {
-    if (currentFilter === "ALL") {
-      return true;
-    }
-    console.log("application.status", application.status, currentFilter);
-    return application.status === currentFilter;
-  });
+  const { data: overview } = useFetchJobApplicationsOverview();
+  const { data: applications } = useFetchJobApplications(page, currentFilter);
+  const { data: searchedApplications } = useFetchSearchedJobApplications(
+    debouncedSearchTerm,
+    page,
+    currentFilter,
+  );
+
+  const totalApplications =
+    (overview?.SAVED ?? 0) +
+    (overview?.APPLIED ?? 0) +
+    (overview?.INTERVIEW ?? 0) +
+    (overview?.OFFER ?? 0) +
+    (overview?.REJECTED ?? 0);
+
+  const currentlyShownApplications = debouncedSearchTerm
+    ? searchedApplications
+    : applications;
+
   const filters = [
     {
       name: "All",
-      count: applications ? applications.length : 0,
+      count: totalApplications,
     },
     {
       name: "Saved",
-      count: applications
-        ? applications.filter((a: application) => a.status === "SAVED").length
-        : 0,
+      count: overview?.SAVED || 0,
     },
     {
       name: "Applied",
-      count: applications
-        ? applications.filter((a: application) => a.status === "APPLIED").length
-        : 0,
+      count: overview?.APPLIED || 0,
     },
     {
       name: "Interview",
-      count: applications
-        ? applications.filter((a: application) => a.status === "INTERVIEW")
-            .length
-        : 0,
+      count: overview?.INTERVIEW || 0,
     },
     {
       name: "Offers",
-      count: applications
-        ? applications.filter((a: application) => a.status === "OFFER").length
-        : 0,
+      count: overview?.OFFER || 0,
     },
     {
       name: "Rejected",
-      count: applications
-        ? applications.filter((a: application) => a.status === "REJECTED")
-            .length
-        : 0,
+      count: overview?.REJECTED || 0,
     },
   ];
 
@@ -94,7 +92,7 @@ export default function ApplicationsTable() {
             }
           >
             {filter.name}
-            <small>{filter.count}</small>
+            <span style={{ fontSize: 12 }}>&nbsp;({filter.count})</span>
           </button>
         ))}
       </div>
@@ -108,17 +106,6 @@ export default function ApplicationsTable() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </label>
-        <button type="button" className={styles.sort}>
-          <span className={styles.desktopText}>Newest first</span>
-          <span className={styles.mobileText}>Newest</span>
-          <Image
-            src="/icons/dropdown.svg"
-            alt=""
-            width={18}
-            height={18}
-            unoptimized
-          />
-        </button>
       </div>
       <p className={styles.sampleLabel}>Sample applications</p>
       <div className={styles.table}>
@@ -131,10 +118,10 @@ export default function ApplicationsTable() {
           <span />
         </div>
         <div className={styles.rows}>
-          {filteredApplications?.map((application: application) => (
+          {currentlyShownApplications?.map((application: application) => (
             <article
               className={styles.row}
-              key={application.companyName + application.role}
+              key={application.id}
               aria-label={`${application.companyName}, ${application.role}`}
             >
               <div className={styles.company}>
@@ -148,6 +135,7 @@ export default function ApplicationsTable() {
                       size={12}
                       strokeWidth={1.4}
                       aria-hidden="true"
+                      onClick={() => window.open(application.jobUrl, "_blank")}
                     />
                   </h2>
                   <p>{application.role}</p>
@@ -189,43 +177,43 @@ export default function ApplicationsTable() {
                   {/*{application.prep}*/}
                 </button>
               </div>
-              <button
-                type="button"
-                className={styles.more}
-                aria-label={`More options for ${application.companyName}`}
-              >
-                <Image
-                  className={styles.desktopText}
-                  src="/icons/more.svg"
-                  alt=""
-                  width={16}
-                  height={16}
-                  unoptimized
-                />
-                <Image
-                  className={styles.mobileText}
-                  src="/icons/mobile-more.svg"
-                  alt=""
-                  width={18}
-                  height={18}
-                  unoptimized
-                />
-              </button>
+              <ApplicationOptionsMenu application={application} />
             </article>
           ))}
         </div>
         <footer className={styles.pagination}>
           <span className={styles.desktopText}>
-            Showing 1–8 of 12 applications
+            Showing {page * APPLICATIONS_PER_PAGE + 1}–
+            {page * APPLICATIONS_PER_PAGE + currentlyShownApplications?.length}{" "}
+            of {totalApplications} applications
           </span>
-          <span className={styles.mobileText}>Showing 8 of 12</span>
+          <span className={styles.mobileText}>
+            {" "}
+            Showing {page * APPLICATIONS_PER_PAGE + 1}–
+            {page * APPLICATIONS_PER_PAGE + currentlyShownApplications?.length}{" "}
+            of applications
+          </span>
           <div className={styles.pages}>
-            <button type="button" className={styles.previous}>
+            <button
+              type="button"
+              className={styles.previous}
+              onClick={() => setPage((page) => Math.max(0, page - 1))}
+            >
               Previous
             </button>
-            <span className={styles.currentPage}>1</span>
-            <span className={styles.secondPage}>2</span>
-            <button type="button">Next</button>
+            {/*<span className={styles.currentPage}>1</span>
+            <span className={styles.secondPage}>2</span>*/}
+            <button
+              type="button"
+              onClick={() => setPage((page) => page + 1)}
+              disabled={
+                currentlyShownApplications
+                  ? currentlyShownApplications.length < APPLICATIONS_PER_PAGE
+                  : true
+              }
+            >
+              Next
+            </button>
           </div>
         </footer>
       </div>

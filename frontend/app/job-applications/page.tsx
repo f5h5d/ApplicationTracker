@@ -1,9 +1,15 @@
-﻿import Image from "next/image";
+﻿"use client";
+
+import Image from "next/image";
+import { useState } from "react";
+import AddApplicationModal from "./components/AddApplicationModal";
 import ApplicationsTable from "./components/ApplicationsTable";
 import Navbar from "@/src/lib/components/Navbar";
 import styles from "./page.module.css";
 
 export default function ApplicationsPage() {
+  const [isAddApplicationOpen, setIsAddApplicationOpen] = useState(false);
+
   return (
     <div className={styles.container}>
       <Navbar />
@@ -16,7 +22,12 @@ export default function ApplicationsPage() {
             </div>
             <p>Your co-op search, organized.</p>
           </div>
-          <button type="button" className={styles.addButton}>
+          <button
+            type="button"
+            className={styles.addButton}
+            onClick={() => setIsAddApplicationOpen(true)}
+            aria-haspopup="dialog"
+          >
             <Image
               src="/icons/plus.svg"
               alt=""
@@ -30,6 +41,9 @@ export default function ApplicationsPage() {
         </header>
         <ApplicationsTable />
       </main>
+      {isAddApplicationOpen && (
+        <AddApplicationModal onClose={() => setIsAddApplicationOpen(false)} />
+      )}
     </div>
   );
 }
