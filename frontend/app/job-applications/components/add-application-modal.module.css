@@ -1,12 +1,22 @@
 ﻿.overlay {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
+  color: inherit;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   background: rgba(30, 30, 30, 0.4);
+}
+.overlay::backdrop {
+  background: transparent;
 }
 .dialog {
   width: 680px;
@@ -46,6 +56,25 @@
   color: var(--color-text-secondary);
   font-size: 13px;
   line-height: 19px;
+}
+.headerDetails {
+  min-width: 0;
+}
+.headerDetails p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.noteDialog {
+  width: 560px;
+}
+.form.noteForm {
+  display: block;
+}
+.form.noteForm textarea {
+  height: 220px;
+  min-height: 160px;
+  resize: vertical;
 }
 .close {
   display: grid;
@@ -100,6 +129,12 @@
   font-size: 14px;
   line-height: 20px;
 }
+.error {
+  grid-column: 1 / -1;
+  color: #b42318;
+  font-size: 12px;
+  line-height: 18px;
+}
 .form input {
   height: 44px;
   padding: 8px 16px;
@@ -114,7 +149,15 @@
   border-color: var(--color-primary);
   box-shadow: 0 0 0 0.5px var(--color-primary);
 }
-.semester .select {
+.form input[readonly],
+.form textarea[readonly] {
+  background: var(--color-background);
+}
+.company input[readonly] {
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+.semester .select:has(option[value=""]:checked) {
   color: var(--color-text-secondary);
 }
 .form input::placeholder,
@@ -124,13 +167,22 @@
 }
 .select {
   height: 40px;
-  padding: 8px 12px 8px 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 8px 38px 8px 16px;
+  appearance: none;
+  background-image: url("/icons/dropdown.svg");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  font-family: inherit;
   text-align: left;
-  gap: 8px;
   white-space: nowrap;
+}
+.select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+.select option {
+  color: var(--color-text);
 }
 .footer {
   display: flex;
@@ -147,6 +199,11 @@
   color: var(--color-text-secondary);
   font-size: 11px;
   line-height: 16px;
+}
+.close:disabled,
+.footer button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 .footer button {
   display: flex;

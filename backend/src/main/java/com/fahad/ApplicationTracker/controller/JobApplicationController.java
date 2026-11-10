@@ -4,9 +4,11 @@ import com.fahad.ApplicationTracker.dto.CreateJobApplication;
 import com.fahad.ApplicationTracker.dto.UpdateStatusRequest;
 import com.fahad.ApplicationTracker.entity.ApplicationStatus;
 import com.fahad.ApplicationTracker.entity.JobApplication;
+import com.fahad.ApplicationTracker.entity.StatusCount;
 import com.fahad.ApplicationTracker.service.JobApplicationService;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,18 +76,48 @@ public class JobApplicationController {
 
   @GetMapping("search")
   public ResponseEntity<List<JobApplication>> fetchJobApplicationSearchResults(
-    @RequestParam("search") String search
+    @RequestParam("search") String search,
+    @RequestParam("page") int page,
+    @RequestParam(required = false) ApplicationStatus filter
   ) {
+    if (filter == null) {
+      return ResponseEntity.ok(
+        jobApplicationService
+          .fetchJobApplicationSearchResults(search, page)
+          .getContent()
+      );
+    } else {
+      return ResponseEntity.ok(
+        jobApplicationService
+          .fetchJobApplicationSearchResults(search, page, filter)
+          .getContent()
+      );
+    }
+  }
+
+  @GetMapping("/overview")
+  public ResponseEntity<
+    Map<ApplicationStatus, Long>
+  > fetchApplicationOverview() {
     return ResponseEntity.ok(
-      jobApplicationService.fetchJobApplicationSearchResults(search)
+      jobApplicationService.fetchJobApplicationsOverview()
     );
   }
 
   @GetMapping("")
-  public ResponseEntity<Page<JobApplication>> fetchJobApplications(
-    @RequestParam("page") int page
+  public ResponseEntity<List<JobApplication>> fetchJobApplications(
+    @RequestParam("page") int page,
+    @RequestParam(required = false) ApplicationStatus filter
   ) {
-    return ResponseEntity.ok(jobApplicationService.fetchJobApplications(page));
+    if (filter == null) {
+      return ResponseEntity.ok(
+        jobApplicationService.fetchJobApplications(page).getContent()
+      );
+    } else {
+      return ResponseEntity.ok(
+        jobApplicationService.fetchJobApplications(page, filter).getContent()
+      );
+    }
   }
 
   @DeleteMapping("")

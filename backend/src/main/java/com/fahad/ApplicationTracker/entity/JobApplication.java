@@ -8,8 +8,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.Size;
-
 import java.time.Instant;
+import java.time.LocalDate;
+import org.hibernate.annotations.Changelog.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,7 +24,6 @@ public class JobApplication {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-
   @Column(name = "company_name", length = 255, nullable = false)
   private String companyName;
 
@@ -36,9 +36,13 @@ public class JobApplication {
   @Column(name = "job_url", columnDefinition = "TEXT", nullable = true)
   private String jobUrl;
 
-  
+  @Column(name = "semester", length = 25, nullable = true)
+  private String semester;
 
-  @Column(name = "notes", length = 100, nullable = true)
+  @Column(name = "deadline", nullable = true)
+  private LocalDate deadline;
+
+  @Column(name = "notes", columnDefinition = "TEXT", nullable = true)
   private String notes;
 
   @Enumerated(EnumType.STRING)
@@ -77,6 +81,10 @@ public class JobApplication {
     this.updatedAt = updatedAt;
   }
 
+  public Long getId() {
+    return id;
+  }
+
   public String getCompanyName() {
     return companyName;
   }
@@ -107,6 +115,14 @@ public class JobApplication {
 
   public void setJobUrl(String jobUrl) {
     this.jobUrl = jobUrl;
+  }
+
+  public String getSemester() {
+    return semester;
+  }
+
+  public LocalDate getDeadline() {
+    return deadline;
   }
 
   public String getNotes() {

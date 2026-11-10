@@ -15,7 +15,7 @@
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  /*gap: 8px;*/
   height: 36px;
   padding: 0 12px;
   border-radius: 8px;
@@ -31,8 +31,10 @@
   line-height: 16px;
 }
 .filters .selectedFilter {
-  background: var(--color-primary);
-  color: var(--color-surface);
+  /*background: var(--color-primary);*/
+  /*color: var(--color-surface);*/
+  font-weight: bold;
+  /*text-decoration: underline;*/
   opacity: 1;
 }
 
@@ -43,7 +45,7 @@
   }
 }
 
-.filters button:nth-child(2) {
+/*.filters button:nth-child(2) {
   width: 87px;
 }
 .filters button:nth-child(3) {
@@ -57,7 +59,7 @@
 }
 .filters button:nth-child(6) {
   width: 104px;
-}
+}*/
 .toolbar {
   display: flex;
   align-items: center;
@@ -97,7 +99,6 @@
   color: var(--color-text-secondary);
   opacity: 1;
 }
-.sort,
 .pagination button {
   display: flex;
   align-items: center;
@@ -111,9 +112,6 @@
   font-size: 14px;
   line-height: 20px;
   white-space: nowrap;
-}
-.sort {
-  width: 136px;
 }
 .pagination button {
   width: 64px;
@@ -255,6 +253,74 @@
   border-radius: 8px;
   background: transparent;
 }
+.optionsTrigger {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+.optionsTrigger:hover,
+.optionsTrigger[aria-expanded="true"] {
+  background: var(--color-accent);
+}
+.optionsMenu {
+  position: fixed;
+  inset: auto;
+  width: 176px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  margin: 0;
+  padding: 6px;
+  overflow-y: auto;
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  box-shadow: 0 8px 24px rgba(12, 12, 13, 0.16);
+}
+.optionsItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: left;
+  cursor: pointer;
+}
+.optionsItem:hover,
+.optionsItem:focus-visible {
+  background: var(--color-accent);
+}
+.optionsItem:focus-visible {
+  outline-offset: -2px;
+}
+.optionsSeparator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--color-border);
+}
+.deleteOption {
+  color: var(--color-rejected-text);
+}
+.deleteOption:hover,
+.deleteOption:focus-visible {
+  background: var(--color-rejected-background);
+}
+@media (pointer: coarse) {
+  .optionsItem {
+    min-height: 44px;
+  }
+}
 .pagination {
   height: 56px;
   display: flex;
@@ -323,11 +389,6 @@
   }
   .search input {
     font-size: 16px;
-  }
-  .sort {
-    flex: 0 0 96px;
-    height: 44px;
-    padding: 0 8px;
   }
   .filters {
     height: 44px;

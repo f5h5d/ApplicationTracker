@@ -4,10 +4,14 @@ import com.fahad.ApplicationTracker.dto.CreateJobApplication;
 import com.fahad.ApplicationTracker.dto.UpdateStatusRequest;
 import com.fahad.ApplicationTracker.entity.ApplicationStatus;
 import com.fahad.ApplicationTracker.entity.JobApplication;
+import com.fahad.ApplicationTracker.entity.StatusCount;
 import com.fahad.ApplicationTracker.exception.ApplicationNotFoundException;
 import com.fahad.ApplicationTracker.repository.JobApplicationRepository;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +44,17 @@ public class JobApplicationService {
 
   public Page<JobApplication> fetchJobApplications(int page) {
     return jobApplicationRepository.findAll(
-      PageRequest.of(page, 10, Sort.by("createdAt", "id").descending())
+      PageRequest.of(page, 7, Sort.by("createdAt", "id").descending())
+    );
+  }
+
+  public Page<JobApplication> fetchJobApplications(
+    int page,
+    ApplicationStatus filter
+  ) {
+    return jobApplicationRepository.findByStatus(
+      filter,
+      PageRequest.of(page, 7, Sort.by("createdAt", "id").descending()) // second is the pageable filter
     );
   }
 
@@ -75,11 +89,25 @@ public class JobApplicationService {
     jobApplicationRepository.deleteAll();
   }
 
-  public List<JobApplication> fetchJobApplicationSearchResults(String search) {
-    return jobApplicationRepository.findByCompanyNameContainingIgnoreCaseOrRoleContainingIgnoreCaseOrJobDescriptionContainingIgnoreCase(
+  public Page<JobApplication> fetchJobApplicationSearchResults(
+    String search,
+    int page
+  ) {
+    return jobApplicationRepository.searchApplications(
       search,
+      PageRequest.of(page, 7, Sort.by("createdAt", "id").descending())
+    );
+  }
+
+  public Page<JobApplication> fetchJobApplicationSearchResults(
+    String search,
+    int page,
+    ApplicationStatus status
+  ) {
+    return jobApplicationRepository.searchApplications(
       search,
-      search
+      status,
+      PageRequest.of(page, 7, Sort.by("createdAt", "id").descending())
     );
   }
 
@@ -87,5 +115,18 @@ public class JobApplicationService {
     return jobApplicationRepository
       .findById(id)
       .orElseThrow(() -> new ApplicationNotFoundException(id));
+  }
+
+  public Map<ApplicationStatus, Long> fetchJobApplicationsOverview() {
+    List<StatusCount> overview =
+      jobApplicationRepository.findApplicationsOverview();
+
+    // turn data into form { "SAVED": x, "APPLIED": y, etc}
+    Map<ApplicationStatus, Long> map = new HashMap<>();
+    for (int i = 0; i < overview.size(); i++) {
+      map.put(overview.get(i).getStatus(), overview.get(i).getTotal());
+    }
+
+    return map;
   }
 }
