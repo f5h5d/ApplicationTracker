@@ -51,15 +51,19 @@ public interface JobApplicationRepository
     Pageable pageable
   );
 
-  @Query("""
-      select a.status as status, count(a) as total
-      from JobApplication a
-      group by a.status
-      """)
+  @Query(
+    """
+    select a.status as status, count(a) as total
+    from JobApplication a
+    group by a.status
+    """
+  )
   List<StatusCount> findApplicationsOverview();
 
   Page<JobApplication> findByStatus(
     ApplicationStatus status,
     Pageable pageable
   );
+
+  List<JobApplication> findByStatus(ApplicationStatus status);
 }

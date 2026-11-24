@@ -160,5 +160,4 @@ public class JobApplication {
   public void setSemester(String semester) {
     this.semester = semester;
   }
-  
 }
