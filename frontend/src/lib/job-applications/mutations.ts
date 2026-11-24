@@ -5,13 +5,17 @@ import {
   deleteJobApplication,
   updateJobApplication,
 } from "./api";
+import { getCsrfToken } from "./helpers";
 
 export const useAddJobApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["add-job-application"],
-    mutationFn: async (newApplication: NewApplication) =>
-      addJobApplication(newApplication),
+    mutationFn: async (newApplication: NewApplication) => {
+      const csrf = await getCsrfToken(queryClient);
+      await addJobApplication(newApplication, csrf);
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["job-applications"] });
       queryClient.invalidateQueries({
@@ -25,7 +29,10 @@ export const useDeleteJobApplication = (applicationId: number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["delete-job-application"],
-    mutationFn: async () => deleteJobApplication(applicationId),
+    mutationFn: async () => {
+      const csrf = await getCsrfToken(queryClient);
+      await deleteJobApplication(applicationId, csrf);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["job-applications"] });
       queryClient.invalidateQueries({
@@ -42,8 +49,17 @@ export const useUpdateJobApplication = (
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["update-job-application"],
-    mutationFn: async ({ status, notes }: { status: string; notes: string }) =>
-      updateJobApplication(applicationId, status, notes),
+    mutationFn: async ({
+      status,
+      notes,
+    }: {
+      status: string;
+      notes: string;
+    }) => {
+      const csrf = await getCsrfToken(queryClient);
+      await updateJobApplication(applicationId, status, notes, csrf);
+    },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["job-applications"] });
       queryClient.invalidateQueries({

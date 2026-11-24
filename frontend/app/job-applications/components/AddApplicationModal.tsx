@@ -58,6 +58,7 @@ export default function AddApplicationModal({
       return;
     }
 
+    // console.log(formValues)
     setError("");
     addApplication(formValues);
     onClose();
