@@ -36,6 +36,7 @@ public class JobApplicationService {
     application.setRole(request.role());
     application.setJobDescription(request.jobDescription());
     application.setJobUrl(request.jobUrl());
+    application.setSemester(request.semester());
     application.setNotes(request.notes());
     application.setStatus(request.status());
 

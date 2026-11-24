@@ -156,4 +156,9 @@ public class JobApplication {
   public void setStatus(ApplicationStatus status) {
     this.status = status;
   }
+
+  public void setSemester(String semester) {
+    this.semester = semester;
+  }
+  
 }

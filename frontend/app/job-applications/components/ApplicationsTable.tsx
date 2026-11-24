@@ -5,23 +5,36 @@ import { ExternalLink, Search } from "lucide-react";
 import styles from "./applications-table.module.css";
 import {
   useFetchJobApplications,
-  useFetchJobApplicationsOverview,
   useFetchSearchedJobApplications,
 } from "@/src/lib/job-applications/queries";
+import type { ApplicationCounts } from "@/src/lib/job-applications/api";
 import { application } from "../types";
 import { useEffect, useState } from "react";
 import { APPLICATIONS_PER_PAGE } from "@/src/lib/constants";
 import ApplicationOptionsMenu from "./ApplicationOptionsMenu";
 import { useDeleteJobApplication } from "@/src/lib/job-applications/mutations";
 
-// type Application = {};
+const addedDateFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "2-digit",
+});
 
-export default function ApplicationsTable() {
+function formatAddedDate(createdAt: string) {
+  const timestamp = Date.parse(createdAt);
+  return Number.isNaN(timestamp) ? "—" : addedDateFormat.format(timestamp);
+}
+
+export default function ApplicationsTable({
+  overview,
+  totalApplications,
+}: {
+  overview: ApplicationCounts | undefined;
+  totalApplications: number;
+}) {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [page, setPage] = useState<number>(0);
   const [currentFilter, setCurrentFilter] = useState<string>("ALL");
-  const { data: overview } = useFetchJobApplicationsOverview();
   const { data: applications } = useFetchJobApplications(page, currentFilter);
   const { data: searchedApplications } = useFetchSearchedJobApplications(
     debouncedSearchTerm,
@@ -29,16 +42,11 @@ export default function ApplicationsTable() {
     currentFilter,
   );
 
-  const totalApplications =
-    (overview?.SAVED ?? 0) +
-    (overview?.APPLIED ?? 0) +
-    (overview?.INTERVIEW ?? 0) +
-    (overview?.OFFER ?? 0) +
-    (overview?.REJECTED ?? 0);
-
   const currentlyShownApplications = debouncedSearchTerm
     ? searchedApplications
     : applications;
+
+  console.log(applications)
 
   const filters = [
     {
@@ -143,7 +151,7 @@ export default function ApplicationsTable() {
               </div>
               <div className={styles.semester}>
                 <span className={styles.mobileText}>Semester</span>
-                <span>Winter 27</span>
+                <span>{application.semester?.trim() || "—"}</span>
               </div>
               <div className={styles.statusCell}>
                 <span
@@ -162,8 +170,7 @@ export default function ApplicationsTable() {
               </div>
               <div className={styles.added}>
                 <span className={styles.mobileText}>Added</span>
-                {/*{application.added}*/}
-                Nov 08
+                {formatAddedDate(application.createdAt)}
               </div>
               <div className={styles.prep}>
                 <button type="button" className={styles.generatePrep}>

@@ -1,0 +1,220 @@
+.header,
+.applicationCard,
+.planHeader,
+.actions,
+.metadata,
+.planHeader p {
+  display: flex;
+  align-items: center;
+}
+
+.header,
+.applicationCard,
+.planHeader {
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.header {
+  min-height: 76px;
+  margin-bottom: 24px;
+}
+
+.header h1 {
+  font: 500 34px/1.35 var(--font-heading);
+  letter-spacing: -.68px;
+}
+
+.header p,
+.subtitle,
+.questions p,
+.details dd {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.header p,
+.subtitle {
+  margin-top: 5px;
+}
+
+.actions { gap: 12px; }
+
+.actions button,
+.postingButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.resumeButton,
+.postingButton,
+.card,
+.applicationCard {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.resumeButton { cursor: pointer; }
+.resumeButton:hover { background: var(--color-accent); }
+.actions .generateButton {
+  padding: 0 24px;
+  background: var(--color-primary);
+  color: var(--color-surface);
+}
+
+.card,
+.applicationCard {
+  min-width: 0;
+  padding: 24px;
+  border-radius: 8px;
+}
+
+.applicationCard { align-items: flex-start; }
+.applicationField { width: min(100%, 610px); }
+.applicationField label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 13px;
+}
+
+.applicationField select {
+  width: 100%;
+  height: 42px;
+  appearance: none;
+  padding: 0 36px 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface) url("/icons/dropdown.svg") no-repeat right 12px center;
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.applicationField select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.metadata {
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.status,
+.planHeader span {
+  padding: 3px 9px;
+  border-radius: 7px;
+  font-weight: 500;
+}
+
+.planHeader {
+  margin: 24px 0;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+
+.planHeader h2 {
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.planHeader p { gap: 12px; }
+.planHeader span,
+.number {
+  background: var(--color-accent);
+  color: var(--color-link);
+}
+
+.planGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+
+.sideCards { display: grid; gap: 24px; }
+.card h3 {
+  font: 500 21px/1.4 var(--font-heading);
+  letter-spacing: -.3px;
+}
+
+.questions,
+.details { margin-top: 22px; }
+
+.questions li {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 0;
+}
+
+.questions li:first-child { padding-top: 0; }
+.questions li + li { border-top: 1px solid var(--color-border); }
+.number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.questions h4 {
+  font: 500 16px/1.45 var(--font-heading);
+}
+
+.questions p,
+.details dd { margin-top: 6px; }
+.details { display: grid; gap: 18px; }
+.details dt { font: 500 15px/1.4 var(--font-heading); }
+
+.resumeHint {
+  margin-top: 10px;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 19px;
+}
+
+@media (max-width: 767px) {
+  .header,
+  .applicationCard,
+  .planHeader {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .header { margin-bottom: 18px; }
+  .header h1 { font-size: 22px; letter-spacing: -.44px; }
+  .header p { font-size: 13px; }
+  .actions { flex-wrap: wrap; gap: 8px; }
+  .actions button { flex: 1; padding-inline: 12px; }
+  .applicationField { width: 100%; }
+  .applicationField select { font-size: 16px; }
+  .postingButton { align-self: flex-start; }
+  .card,
+  .applicationCard { padding: 18px; }
+  .planHeader { gap: 6px; margin: 20px 0 12px; }
+  .planHeader p { flex-wrap: wrap; gap: 6px; }
+  .planGrid { grid-template-columns: minmax(0, 1fr); }
+  .planGrid,
+  .sideCards { gap: 16px; }
+  .questions li { gap: 12px; }
+  .questions li:last-child { padding-bottom: 0; }
+}
