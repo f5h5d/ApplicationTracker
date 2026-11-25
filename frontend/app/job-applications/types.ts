@@ -13,6 +13,6 @@ export type application = {
   userId?: string;
 };
 
-export type NewApplication = Omit<application, "id">;
+export type NewApplication = Omit<application, "id" | "createdAt" | "updatedAt" | "userId">;
 
 export type UpdateApplication = Pick<application, "id" | "status" | "notes">;

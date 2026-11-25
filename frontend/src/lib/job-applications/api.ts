@@ -2,7 +2,6 @@
 import type {
   application,
   NewApplication,
-  UpdateApplication,
 } from "@/app/job-applications/types";
 import { csrf } from "@/app/login/types";
 import axios from "axios";
@@ -12,21 +11,10 @@ const api = axios.create({
   withCredentials: true,
 });
 
-export const fetchJobApplications = async (page: number, filter: string) => {
-  const response = await api.get(
-    `/api/applications/?page=${page}${filter && filter !== "ALL" ? `&filter=${filter}` : ""}`,
-  );
-
-  return response.data;
-};
-
-export const fetchSearchedJobApplications = async (
-  searchTerm: string,
-  page: number,
-  filter: string,
-) => {
-  const response = await api.get(
-    `/api/applications/search?search=${searchTerm}&page=${page}${filter && filter !== "ALL" ? `&filter=${filter}` : ""}`,
+export const fetchJobApplications = async (page: number, filter: string, search: string) => {
+  const response = await api.get<application[]>(
+    search ? "/api/applications/search" : "/api/applications/",
+    { params: { page, filter: filter === "ALL" ? undefined : filter, search: search || undefined } },
   );
 
   return response.data;

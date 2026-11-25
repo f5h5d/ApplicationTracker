@@ -3,26 +3,29 @@
 import Image from "next/image";
 import { ExternalLink, Search } from "lucide-react";
 import styles from "./applications-table.module.css";
+import { useFetchJobApplications } from "@/src/lib/job-applications/queries";
+import { useDeleteJobApplication } from "@/src/lib/job-applications/mutations";
+import RequestError from "@/src/lib/components/RequestError";
 import {
-  useFetchJobApplications,
-  useFetchSearchedJobApplications,
-} from "@/src/lib/job-applications/queries";
+  formatApplicationDate,
+  formatStatus,
+  getPostingUrl,
+} from "@/src/lib/job-applications/display";
 import type { ApplicationCounts } from "@/src/lib/job-applications/api";
-import { application } from "../types";
-import { useEffect, useState } from "react";
+import type { application } from "../types";
+import { Fragment, useEffect, useState } from "react";
 import { APPLICATIONS_PER_PAGE } from "@/src/lib/constants";
 import ApplicationOptionsMenu from "./ApplicationOptionsMenu";
-import { useDeleteJobApplication } from "@/src/lib/job-applications/mutations";
 
-const addedDateFormat = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "2-digit",
-});
-
-function formatAddedDate(createdAt: string) {
-  const timestamp = Date.parse(createdAt);
-  return Number.isNaN(timestamp) ? "—" : addedDateFormat.format(timestamp);
-}
+type Filter = "ALL" | application["status"];
+const filters: Filter[] = [
+  "ALL",
+  "SAVED",
+  "APPLIED",
+  "INTERVIEW",
+  "OFFER",
+  "REJECTED",
+];
 
 export default function ApplicationsTable({
   overview,
@@ -31,76 +34,60 @@ export default function ApplicationsTable({
   overview: ApplicationCounts | undefined;
   totalApplications: number;
 }) {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
-  const [page, setPage] = useState<number>(0);
-  const [currentFilter, setCurrentFilter] = useState<string>("ALL");
-  const { data: applications } = useFetchJobApplications(page, currentFilter);
-  const { data: searchedApplications } = useFetchSearchedJobApplications(
-    debouncedSearchTerm,
-    page,
-    currentFilter,
-  );
-
-  const currentlyShownApplications = debouncedSearchTerm
-    ? searchedApplications
-    : applications;
-
-  console.log(applications)
-
-  const filters = [
-    {
-      name: "All",
-      count: totalApplications,
-    },
-    {
-      name: "Saved",
-      count: overview?.SAVED || 0,
-    },
-    {
-      name: "Applied",
-      count: overview?.APPLIED || 0,
-    },
-    {
-      name: "Interview",
-      count: overview?.INTERVIEW || 0,
-    },
-    {
-      name: "Offers",
-      count: overview?.OFFER || 0,
-    },
-    {
-      name: "Rejected",
-      count: overview?.REJECTED || 0,
-    },
-  ];
+  const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [currentFilter, setCurrentFilter] = useState<Filter>("ALL");
+  const deletion = useDeleteJobApplication();
+  const {
+    data: applications = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchJobApplications(page, currentFilter, debouncedSearchTerm);
+  const total =
+    currentFilter === "ALL"
+      ? totalApplications
+      : (overview?.[currentFilter] ?? 0);
+  const end = page * APPLICATIONS_PER_PAGE + applications.length;
 
   useEffect(() => {
+    const search = searchTerm.trim();
+    if (search === debouncedSearchTerm) return;
     const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500); // Adjust the debounce delay as needed
+      setDebouncedSearchTerm(search);
+      setPage(0);
+    }, 500);
 
     return () => {
       clearTimeout(handler);
     };
-  });
+  }, [searchTerm, debouncedSearchTerm]);
 
   return (
-    <section className={styles.applications} aria-label="Sample applications">
+    <section className={styles.applications} aria-label="Applications">
       <div className={styles.filters} aria-label="Application status filters">
         {filters.map((filter) => (
           <button
-            key={filter.name}
+            key={filter}
             type="button"
-            onClick={() => setCurrentFilter(filter.name.toUpperCase())}
+            onClick={() => {
+              setCurrentFilter(filter);
+              setPage(0);
+            }}
+            aria-pressed={currentFilter === filter}
             className={
-              currentFilter === filter.name.toUpperCase()
-                ? styles.selectedFilter
-                : ""
+              currentFilter === filter ? styles.selectedFilter : undefined
             }
           >
-            {filter.name}
-            <span style={{ fontSize: 12 }}>&nbsp;({filter.count})</span>
+            {filter === "OFFER" ? "Offers" : formatStatus(filter)}
+            {overview && (
+              <small>
+                (
+                {filter === "ALL" ? totalApplications : (overview[filter] ?? 0)}
+                )
+              </small>
+            )}
           </button>
         ))}
       </div>
@@ -115,108 +102,118 @@ export default function ApplicationsTable({
           />
         </label>
       </div>
-      <p className={styles.sampleLabel}>Sample applications</p>
       <div className={styles.table}>
         <div className={styles.headings} aria-hidden="true">
           <span>Company &amp; role</span>
           <span>Semester</span>
           <span>Status</span>
           <span>Added</span>
-          <span>Interview prep</span>
           <span />
         </div>
         <div className={styles.rows}>
-          {currentlyShownApplications?.map((application: application) => (
-            <article
-              className={styles.row}
-              key={application.id}
-              aria-label={`${application.companyName}, ${application.role}`}
-            >
-              <div className={styles.company}>
-                <span className={styles.monogram}>
-                  {application.companyName[0]}
-                </span>
-                <div className={styles.companyText}>
-                  <h2>
-                    {application.companyName}
-                    <ExternalLink
-                      size={12}
-                      strokeWidth={1.4}
-                      aria-hidden="true"
-                      onClick={() => window.open(application.jobUrl, "_blank")}
-                    />
-                  </h2>
-                  <p>{application.role}</p>
-                </div>
-              </div>
-              <div className={styles.semester}>
-                <span className={styles.mobileText}>Semester</span>
-                <span>{application.semester?.trim() || "—"}</span>
-              </div>
-              <div className={styles.statusCell}>
-                <span
-                  className={`${styles.status} ${styles[application.status.toLowerCase()]}`}
+          {isError && (
+            <RequestError onRetry={() => refetch()}>Couldn’t load applications.</RequestError>
+          )}
+          {!isError && applications.length === 0 && (
+            <p className={styles.tableNotice} role="status">
+              {isLoading ? "Loading applications…" : "No applications found."}
+            </p>
+          )}
+          {applications.map((application) => {
+            const postingUrl = getPostingUrl(application.jobUrl);
+            return (
+              <Fragment key={application.id}>
+                <article
+                  className={styles.row}
+                  aria-label={`${application.companyName}, ${application.role}`}
                 >
-                  <Image
-                    src={`/icons/status-${application.status.toLowerCase()}.svg`}
-                    alt=""
-                    width={5}
-                    height={5}
-                    unoptimized
+                  <div className={styles.company}>
+                    <span className={styles.monogram}>
+                      {application.companyName[0]}
+                    </span>
+                    <div className={styles.companyText}>
+                      <h2>
+                        {postingUrl ? (
+                          <a
+                            href={postingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {application.companyName}
+                            <ExternalLink
+                              size={12}
+                              strokeWidth={1.4}
+                              aria-hidden="true"
+                            />
+                          </a>
+                        ) : (
+                          application.companyName
+                        )}
+                      </h2>
+                      <p>{application.role}</p>
+                    </div>
+                  </div>
+                  <div className={styles.semester}>
+                    <span className={styles.mobileText}>Semester</span>
+                    <span>{application.semester?.trim() || "—"}</span>
+                  </div>
+                  <div className={styles.statusCell}>
+                    <span
+                      className={`${styles.status} ${styles[application.status.toLowerCase()]}`}
+                    >
+                      <Image
+                        src={`/icons/status-${application.status.toLowerCase()}.svg`}
+                        alt=""
+                        width={5}
+                        height={5}
+                        unoptimized
+                      />
+                      {formatStatus(application.status)}
+                    </span>
+                  </div>
+                  <div className={styles.added}>
+                    <span className={styles.mobileText}>Added</span>
+                    {formatApplicationDate(application.createdAt)}
+                  </div>
+                  <ApplicationOptionsMenu
+                    application={application}
+                    deletePending={deletion.isPending}
+                    onDelete={() => deletion.mutate(application.id)}
                   />
-                  {application.status[0] +
-                    application.status.slice(1).toLowerCase()}
-                </span>
-              </div>
-              <div className={styles.added}>
-                <span className={styles.mobileText}>Added</span>
-                {formatAddedDate(application.createdAt)}
-              </div>
-              <div className={styles.prep}>
-                <button type="button" className={styles.generatePrep}>
-                  <Image
-                    src="/icons/prep-spark.svg"
-                    alt=""
-                    width={16}
-                    height={16}
-                    unoptimized
-                  />
-                  {/*{application.prep}*/}
-                </button>
-              </div>
-              <ApplicationOptionsMenu application={application} />
-            </article>
-          ))}
+                </article>
+                {deletion.isError && deletion.variables === application.id && (
+                  <RequestError onRetry={() => deletion.mutate(application.id)}>
+                    {`Couldn’t delete the ${application.role} application at ${application.companyName}.`}
+                  </RequestError>
+                )}
+              </Fragment>
+            );
+          })}
         </div>
         <footer className={styles.pagination}>
-          <span className={styles.desktopText}>
-            Showing {page * APPLICATIONS_PER_PAGE + 1}–
-            {page * APPLICATIONS_PER_PAGE + currentlyShownApplications?.length}{" "}
-            of {totalApplications} applications
-          </span>
-          <span className={styles.mobileText}>
-            {" "}
-            Showing {page * APPLICATIONS_PER_PAGE + 1}–
-            {page * APPLICATIONS_PER_PAGE + currentlyShownApplications?.length}{" "}
-            of applications
+          <span>
+            {applications.length > 0 && (
+              <>
+                Showing {page * APPLICATIONS_PER_PAGE + 1}–{end}
+                {!debouncedSearchTerm && overview && ` of ${total}`}
+              </>
+            )}
           </span>
           <div className={styles.pages}>
             <button
               type="button"
               className={styles.previous}
+              disabled={page === 0}
               onClick={() => setPage((page) => Math.max(0, page - 1))}
             >
               Previous
             </button>
-            {/*<span className={styles.currentPage}>1</span>
-            <span className={styles.secondPage}>2</span>*/}
             <button
               type="button"
               onClick={() => setPage((page) => page + 1)}
               disabled={
-                currentlyShownApplications
-                  ? currentlyShownApplications.length < APPLICATIONS_PER_PAGE
-                  : true
+                applications.length < APPLICATIONS_PER_PAGE ||
+                (!!overview && end >= total)
               }
             >
               Next

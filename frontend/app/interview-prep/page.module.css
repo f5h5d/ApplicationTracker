@@ -1,31 +1,17 @@
-.header,
 .applicationCard,
 .planHeader,
 .actions,
-.metadata,
-.planHeader p {
+.metadata {
   display: flex;
   align-items: center;
 }
 
-.header,
 .applicationCard,
 .planHeader {
   justify-content: space-between;
   gap: 20px;
 }
 
-.header {
-  min-height: 76px;
-  margin-bottom: 24px;
-}
-
-.header h1 {
-  font: 500 34px/1.35 var(--font-heading);
-  letter-spacing: -.68px;
-}
-
-.header p,
 .subtitle,
 .questions p,
 .details dd {
@@ -34,7 +20,6 @@
   line-height: 1.45;
 }
 
-.header p,
 .subtitle {
   margin-top: 5px;
 }
@@ -113,8 +98,7 @@
   font-size: 12px;
 }
 
-.status,
-.planHeader span {
+.status {
   padding: 3px 9px;
   border-radius: 7px;
   font-weight: 500;
@@ -133,12 +117,6 @@
   text-transform: uppercase;
 }
 
-.planHeader p { gap: 12px; }
-.planHeader span,
-.number {
-  background: var(--color-accent);
-  color: var(--color-link);
-}
 
 .planGrid {
   display: grid;
@@ -172,6 +150,8 @@
 .questions li:first-child { padding-top: 0; }
 .questions li + li { border-top: 1px solid var(--color-border); }
 .number {
+  background: var(--color-accent);
+  color: var(--color-link);
   display: grid;
   place-items: center;
   flex: 0 0 32px;
@@ -206,9 +186,6 @@
     align-items: stretch;
     gap: 16px;
   }
-  .header { margin-bottom: 18px; }
-  .header h1 { font-size: 22px; letter-spacing: -.44px; }
-  .header p { font-size: 13px; }
   .actions { flex-wrap: wrap; gap: 8px; }
   .actions button { flex: 1; padding-inline: 12px; }
   .applicationField { width: 100%; }
@@ -217,7 +194,6 @@
   .card,
   .applicationCard { padding: 18px; }
   .planHeader { gap: 6px; margin: 20px 0 12px; }
-  .planHeader p { flex-wrap: wrap; gap: 6px; }
   .planGrid { grid-template-columns: minmax(0, 1fr); }
   .planGrid,
   .sideCards { gap: 16px; }

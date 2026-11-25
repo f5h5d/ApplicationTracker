@@ -32,8 +32,5 @@ export const useLogin = () => {
       queryClient.invalidateQueries({ queryKey: ["session"] });
       router.push("/job-applications");
     },
-    onError: (error) => {
-      console.error("Login failed:", error);
-    },
   });
 };

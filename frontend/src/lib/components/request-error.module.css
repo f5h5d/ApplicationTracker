@@ -1,0 +1,18 @@
+.notice {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-block: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--color-rejected-background);
+  color: var(--color-rejected-text);
+  font-size: 14px;
+}
+
+.notice button {
+  background: transparent;
+  color: inherit;
+  text-decoration: underline;
+}

@@ -25,12 +25,10 @@ export default function AddApplicationModal({
     semester: "",
     deadline: "",
     notes: "",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
   });
 
   const [error, setError] = useState("");
-  const { mutate: addApplication } = useAddJobApplication();
+  const { mutate: addApplication, isPending } = useAddJobApplication();
 
   function updateField(field: keyof typeof formValues, value: string) {
     setFormValues((current) => ({ ...current, [field]: value }));
@@ -58,10 +56,11 @@ export default function AddApplicationModal({
       return;
     }
 
-    // console.log(formValues)
     setError("");
-    addApplication(formValues);
-    onClose();
+    addApplication(formValues, {
+      onSuccess: onClose,
+      onError: () => setError("Couldn’t add the application. Please try again."),
+    });
   };
 
   useEffect(() => {
@@ -78,10 +77,10 @@ export default function AddApplicationModal({
       aria-labelledby="add-application-title"
       onCancel={(event) => {
         event.preventDefault();
-        onClose();
+        if (!isPending) onClose();
       }}
       onClick={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (!isPending && event.target === event.currentTarget) onClose();
       }}
     >
       <section className={styles.dialog}>
@@ -107,6 +106,7 @@ export default function AddApplicationModal({
             className={styles.close}
             aria-label="Close dialog"
             onClick={onClose}
+            disabled={isPending}
           >
             <Image
               className={styles.desktopClose}
@@ -126,7 +126,7 @@ export default function AddApplicationModal({
             />
           </button>
         </header>
-        <div className={styles.form}>
+        <fieldset className={styles.form} disabled={isPending}>
           <label className={styles.company}>
             Company *
             <input
@@ -224,16 +224,17 @@ export default function AddApplicationModal({
           <p className={styles.mobileHelp}>
             Only company and role are required.
           </p>
-        </div>
+        </fieldset>
         <footer className={styles.footer}>
           <p>Fields marked * are required.</p>
-          <button type="button" className={styles.cancel} onClick={onClose}>
+          <button type="button" className={styles.cancel} onClick={onClose} disabled={isPending}>
             Cancel
           </button>
           <button
             type="button"
             className={styles.add}
             onClick={handleAddApplication}
+            disabled={isPending}
           >
             <Image
               src="/icons/plus.svg"
@@ -242,7 +243,7 @@ export default function AddApplicationModal({
               height={16}
               unoptimized
             />
-            Add application
+            {isPending ? "Adding…" : "Add application"}
           </button>
         </footer>
       </section>

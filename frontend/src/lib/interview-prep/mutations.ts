@@ -10,22 +10,22 @@ export const useAddResume = () => {
       const csrf = await getCsrfToken(queryClient);
       await addResume(newResume, csrf);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["recent-resume"] });
+    onSuccess: (_, text) => {
+      queryClient.setQueryData(["recent-resume"], text);
     },
   });
 };
 
-export const useCreateInterviewPrep = (id: number) => {
+export const useCreateInterviewPrep = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["create-interview-prep"],
-    mutationFn: async () => {
+    mutationFn: async (id: number) => {
       const csrf = await getCsrfToken(queryClient);
       await addInterviewPrep(id, csrf);
     },
-    onSuccess: () =>
+    onSuccess: (_, id) =>
       queryClient.invalidateQueries({ queryKey: ["interview-prep", id] }),
   });
 };

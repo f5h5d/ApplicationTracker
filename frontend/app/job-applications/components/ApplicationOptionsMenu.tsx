@@ -6,20 +6,21 @@ import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
 import type { application } from "../types";
 import styles from "./applications-table.module.css";
 import ApplicationDetailsModal from "./ApplicationDetailsModal";
-import { useDeleteJobApplication } from "@/src/lib/job-applications/mutations";
 
 export default function ApplicationOptionsMenu({
   application,
+  onDelete,
+  deletePending,
 }: {
   application: application;
+  onDelete: () => void;
+  deletePending: boolean;
 }) {
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [modal, setModal] = useState<"edit" | "note" | null>(null);
-
-  const { mutate: deleteApplication } = useDeleteJobApplication(application.id);
 
   function closeMenu() {
     menuRef.current?.hidePopover();
@@ -64,7 +65,7 @@ export default function ApplicationOptionsMenu({
     }
 
     const items = Array.from(
-      event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
+      event.currentTarget.querySelectorAll<HTMLButtonElement>("button:enabled"),
     );
     const current = items.findIndex((item) => item === document.activeElement);
     let next: number;
@@ -101,11 +102,6 @@ export default function ApplicationOptionsMenu({
       window.removeEventListener("scroll", dismiss, true);
     };
   }, [isOpen]);
-
-  const handleDelete = () => {
-    deleteApplication();
-    closeMenu();
-  };
 
   return (
     <div className={styles.more}>
@@ -194,7 +190,11 @@ export default function ApplicationOptionsMenu({
           role="menuitem"
           tabIndex={-1}
           className={`${styles.optionsItem} ${styles.deleteOption}`}
-          onClick={handleDelete}
+          disabled={deletePending}
+          onClick={() => {
+            closeMenu();
+            onDelete();
+          }}
         >
           <Trash2 size={16} strokeWidth={1.7} aria-hidden="true" />
           Delete

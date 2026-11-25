@@ -1,32 +1,20 @@
 "use client";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import {
-  fetchJobApplications,
-  fetchJobApplicationsOverview,
-  fetchSearchedJobApplications,
-} from "./api";
+import { useQuery } from "@tanstack/react-query";
+import { fetchJobApplications, fetchJobApplicationsOverview } from "./api";
 
-export const useFetchJobApplications = (page: number, currentFilter: string) =>
-  useQuery({
-    queryKey: ["job-applications", currentFilter, page],
-    queryFn: async () => fetchJobApplications(page, currentFilter),
-  });
-
-export const useFetchSearchedJobApplications = (
-  searchTerm: string,
+export const useFetchJobApplications = (
   page: number,
-  currentFilter: string,
+  filter: string,
+  search: string,
 ) =>
   useQuery({
-    queryKey: ["job-applications", currentFilter, searchTerm],
-    queryFn: async () =>
-      fetchSearchedJobApplications(searchTerm, page, currentFilter),
-    enabled: !!searchTerm, // Only run the query if searchTerm is not empty
-    placeholderData: (previousData) => previousData,
+    queryKey: ["job-applications", filter, search, page],
+    queryFn: () => fetchJobApplications(page, filter, search),
   });
 
-export const useFetchJobApplicationsOverview = () =>
+export const useFetchJobApplicationsOverview = (enabled: boolean) =>
   useQuery({
+    enabled,
     queryKey: ["job-applications-overview"],
     queryFn: async () => fetchJobApplicationsOverview(),
   });

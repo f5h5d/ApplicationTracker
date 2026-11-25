@@ -1,8 +1,5 @@
-import type { interviewPrep } from "@/src/lib/interview-prep/types";
+import type { PlanPoint, PrepPlan } from "@/src/lib/interview-prep/types";
 import styles from "../page.module.css";
-import { useFetchInterviewPrep } from "@/src/lib/interview-prep/queries";
-
-type PlanData = NonNullable<interviewPrep>["interviewPrep"];
 
 function ReviewCard({
   title,
@@ -11,7 +8,7 @@ function ReviewCard({
 }: {
   title: string;
   subtitle: string;
-  items: PlanData["topicsToReview"];
+  items: PlanPoint[];
 }) {
   return (
     <section className={styles.card}>
@@ -29,32 +26,7 @@ function ReviewCard({
   );
 }
 
-export default function InterviewPrepPlan({
-  applicationId,
-  isGeneratingInterviewPrep,
-}: {
-  applicationId: number;
-  isGeneratingInterviewPrep: boolean;
-}) {
-  const {
-    data: prepPlan,
-    isLoading,
-    isError,
-  } = useFetchInterviewPrep(applicationId);
-  console.log("prepPlan", prepPlan);
-
-  if (isGeneratingInterviewPrep || !prepPlan) {
-    let message = "No interview prep plan has been generated yet.";
-    if (isGeneratingInterviewPrep) message = "Generating your interview prep plan…";
-    else if (applicationId && isLoading) message = "Loading your prep plan…";
-    else if (applicationId && isError) message = "Couldn’t load your prep plan.";
-
-    return (
-      <p className={`${styles.card} ${styles.planNotice}`} role="status">
-        {message}
-      </p>
-    );
-  }
+export default function InterviewPrepPlan({ plan }: { plan: PrepPlan }) {
   return (
     <section aria-labelledby="plan-title">
       <header className={styles.planHeader}>
@@ -67,32 +39,32 @@ export default function InterviewPrepPlan({
             Rehearse out loud using examples from your work.
           </p>
           <ol className={styles.questions}>
-            {prepPlan.interviewPrep.practiceQuestions.map(
-              ({ header, description }, index) => (
-                <li key={header}>
-                  <span className={styles.number} aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h4>{header}</h4>
-                    <p>{description}</p>
-                  </div>
-                </li>
-              ),
-            )}
+            {plan.practiceQuestions.map(({ header, description }, index) => (
+              <li key={header}>
+                <span className={styles.number} aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h4>{header}</h4>
+                  <p>{description}</p>
+                </div>
+              </li>
+            ))}
           </ol>
         </section>
         <div className={styles.sideCards}>
           <ReviewCard
             title="Topics to review"
             subtitle="Focus your study time on these topics."
-            items={prepPlan.interviewPrep.topicsToReview}
+            items={plan.topicsToReview}
           />
-          <ReviewCard
-            title="Your talking points"
-            subtitle="Resume evidence to bring into your answers."
-            items={prepPlan.interviewPrep.talkingPoints}
-          />
+          {plan.talkingPoints?.length > 0 && (
+            <ReviewCard
+              title="Your talking points"
+              subtitle="Resume evidence to bring into your answers."
+              items={plan.talkingPoints}
+            />
+          )}
         </div>
       </div>
     </section>
