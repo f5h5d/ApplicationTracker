@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Sparkle } from "lucide-react";
+import { FileText, LoaderCircle, Sparkle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "@/src/lib/components/Navbar";
@@ -8,10 +8,11 @@ import { useSession } from "@/src/lib/login/queries";
 import layoutStyles from "../job-applications/page.module.css";
 import ApplicationSelector from "./components/ApplicationSelector";
 import ResumeModal from "./components/ResumeModal";
-import SamplePrepPlan from "./components/SamplePrepPlan";
+import InterviewPrepPlan from "./components/InterviewPrepPlan";
 import styles from "./page.module.css";
-import { useFetchInterviewingApplications } from "../../src/lib/interview-prep/queries";
 import { application } from "../job-applications/types";
+import { useCreateInterviewPrep } from "@/src/lib/interview-prep/mutations";
+import { useFetchInterviewPrep } from "@/src/lib/interview-prep/queries";
 
 export default function InterviewPrepPage() {
   const router = useRouter();
@@ -33,11 +34,17 @@ export default function InterviewPrepPage() {
     updatedAt: "",
   });
 
-  const {
-    data: interviewingApplications,
-    isLoading: isLoadingInterviewingApplications,
-  } = useFetchInterviewingApplications();
+  console.log("Current application:", currentApplication);
 
+  const {
+    mutate: generateInterviewPrep,
+    isPending: isGeneratingInterviewPrep,
+  } = useCreateInterviewPrep(currentApplication.id);
+
+
+  const { data: prepPlan } = useFetchInterviewPrep(currentApplication.id);
+
+  console.log("prepplan", !!prepPlan);
   useEffect(() => {
     if (!isLoading && !hasSession) router.replace("/login");
   }, [hasSession, isLoading, router]);
@@ -61,23 +68,46 @@ export default function InterviewPrepPage() {
               onClick={() => setResumeOpen(true)}
             >
               <FileText size={16} aria-hidden="true" />
-              {resume ? "Update resume" : "Add resume"}
+              Update resume
             </button>
             <button
               type="button"
               className={styles.generateButton}
-              disabled
-              title="Prep generation is unavailable in the sample preview"
+              disabled={
+                !currentApplication.id ||
+                isGeneratingInterviewPrep ||
+                !!prepPlan // disable if prep plan already exists
+                
+              }
+              aria-busy={isGeneratingInterviewPrep}
+              onClick={() => generateInterviewPrep()}
             >
-              <Sparkle size={18} aria-hidden="true" /> Generate prep
+              {isGeneratingInterviewPrep ? (
+                <>
+                  <LoaderCircle
+                    className="motion-safe:animate-spin"
+                    size={18}
+                    aria-hidden="true"
+                  />
+                  Generating…
+                </>
+              ) : (
+                <>
+                  <Sparkle size={18} aria-hidden="true" /> Generate prep
+                </>
+              )}
             </button>
           </div>
         </header>
         <ApplicationSelector
           currentApplication={currentApplication}
           setCurrentApplication={setCurrentApplication}
+          isGeneratingInterviewPrep={isGeneratingInterviewPrep}
         />
-        <SamplePrepPlan />
+        <InterviewPrepPlan
+          applicationId={currentApplication.id}
+          isGeneratingInterviewPrep={isGeneratingInterviewPrep}
+        />
       </main>
       {resumeOpen && (
         <ResumeModal

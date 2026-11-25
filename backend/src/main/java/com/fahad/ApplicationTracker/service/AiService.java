@@ -1,5 +1,6 @@
 package com.fahad.ApplicationTracker.service;
 
+import com.fahad.ApplicationTracker.entity.InterviewPrepPlan;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class AiService {
     chatClient = builder.build();
   }
 
-  public String chat(String prompt) {
-    return chatClient.prompt(prompt).call().content();
+  public InterviewPrepPlan chat(String prompt) {
+    // using .entity you can specify the return type using a class in this case its json,
+    // check class for more details
+    return chatClient.prompt(prompt).call().entity(InterviewPrepPlan.class);
   }
 }

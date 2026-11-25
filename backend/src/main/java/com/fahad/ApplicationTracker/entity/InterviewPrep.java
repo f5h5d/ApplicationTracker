@@ -10,7 +10,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.Instant;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 /**
  * InterviewPrep
@@ -22,18 +26,16 @@ public class InterviewPrep {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  
   @OneToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "job_application_id", nullable = false, unique = true)
+  @OnDelete (action = OnDeleteAction.CASCADE)
   private JobApplication application;
 
-  @Column(name = "practice_questions", nullable = false)
-  private String practiceQuestions;
-
-  @Column(name = "review_topics", nullable = false)
-  private String reviewTopics;
-
-  @Column(name = "resume_talking_points", nullable = false)
-  private String resumeTalkingPoints;
+  // this annotation tells hibernate to use json when reading and writing record in this column
+  @JdbcTypeCode(SqlTypes.JSON)
+  @Column(name = "interview_prep", columnDefinition = "jsonb", nullable = false)
+  private InterviewPrepPlan interviewPrep;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false)
@@ -46,20 +48,18 @@ public class InterviewPrep {
   public InterviewPrep(
     Long id,
     JobApplication application,
-    String practiceQuestions,
-    String reviewTopics,
-    String resumeTalkingPoints,
+    InterviewPrepPlan interviewPrep,
     Instant createdAt,
     Instant updatedAt
   ) {
     this.id = id;
     this.application = application;
-    this.practiceQuestions = practiceQuestions;
-    this.reviewTopics = reviewTopics;
-    this.resumeTalkingPoints = resumeTalkingPoints;
+    this.interviewPrep = interviewPrep;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
+
+  public InterviewPrep() {}
 
   public Long getId() {
     return id;
@@ -69,36 +69,20 @@ public class InterviewPrep {
     this.id = id;
   }
 
+  public InterviewPrepPlan getInterviewPrep() {
+    return interviewPrep;
+  }
+
+  public void setInterviewPrep(InterviewPrepPlan interviewPrep) {
+    this.interviewPrep = interviewPrep;
+  }
+
   public JobApplication getApplication() {
     return application;
   }
 
   public void setApplication(JobApplication jobApplication) {
     this.application = jobApplication;
-  }
-
-  public String getPracticeQuestions() {
-    return practiceQuestions;
-  }
-
-  public void setPracticeQuestions(String practiceQuestions) {
-    this.practiceQuestions = practiceQuestions;
-  }
-
-  public String getReviewTopics() {
-    return reviewTopics;
-  }
-
-  public void setReviewTopics(String reviewTopics) {
-    this.reviewTopics = reviewTopics;
-  }
-
-  public String getResumeTalkingPoints() {
-    return resumeTalkingPoints;
-  }
-
-  public void setResumeTalkingPoints(String resumeTalkingPoints) {
-    this.resumeTalkingPoints = resumeTalkingPoints;
   }
 
   public Instant getCreatedAt() {

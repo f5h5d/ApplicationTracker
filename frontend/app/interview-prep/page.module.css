@@ -108,7 +108,7 @@
 .metadata {
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 10px;
   color: var(--color-text-secondary);
   font-size: 12px;
 }
@@ -148,6 +148,12 @@
 }
 
 .sideCards { display: grid; gap: 24px; }
+.planNotice {
+  margin-top: 24px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
 .card h3 {
   font: 500 21px/1.4 var(--font-heading);
   letter-spacing: -.3px;

@@ -53,7 +53,8 @@ body {
 }
 h1, h2, p { margin: 0; }
 button, input, textarea { font: inherit; }
-button { border: 0; cursor: default; }
+button { border: 0; cursor: pointer; }
+button:disabled, button[aria-disabled="true"] { cursor: not-allowed; }
 button:focus-visible, input:focus-visible, textarea:focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 3px;

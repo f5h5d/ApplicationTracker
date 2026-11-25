@@ -1,6 +1,8 @@
 package com.fahad.ApplicationTracker.controller;
 
 import com.fahad.ApplicationTracker.dto.CreateResumeRequest;
+import com.fahad.ApplicationTracker.entity.InterviewPrep;
+import com.fahad.ApplicationTracker.entity.InterviewPrepPlan;
 import com.fahad.ApplicationTracker.entity.JobApplication;
 import com.fahad.ApplicationTracker.entity.Resume;
 import com.fahad.ApplicationTracker.service.InterviewPrepService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,8 +46,29 @@ public class InterviewPrepController {
     );
   }
 
+  @PostMapping("{id}")
+  public ResponseEntity<InterviewPrep> createInterviewPrep(
+    @PathVariable Long id
+  ) {
+    return ResponseEntity.ok(interviewPrepService.createInterviewPrep(id));
+  }
+
   @GetMapping("resume")
   public ResponseEntity<String> fetchRecentResume() {
-    return ResponseEntity.ok(interviewPrepService.fetchRecentResume());
+    Resume resume = interviewPrepService.fetchRecentResume();
+
+    if (resume != null) {
+      return ResponseEntity.ok(resume.getResume());
+    } else {
+      return ResponseEntity.ok("");
+    }
+  }
+
+  // id is the job application id
+  @GetMapping("{id}")
+  public ResponseEntity<Optional<InterviewPrep>> fetchInterviewPrep(
+    @PathVariable Long id
+  ) {
+    return ResponseEntity.ok(interviewPrepService.fetchInterviewPrep(id));
   }
 }

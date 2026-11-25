@@ -65,6 +65,9 @@ export const useUpdateJobApplication = (
       queryClient.invalidateQueries({
         queryKey: ["job-applications-overview"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["interviewing-applications"],
+      });
       onClose();
     },
   });
