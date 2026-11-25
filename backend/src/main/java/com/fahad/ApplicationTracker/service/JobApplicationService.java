@@ -4,6 +4,7 @@ import com.fahad.ApplicationTracker.dto.CreateJobApplication;
 import com.fahad.ApplicationTracker.dto.UpdateStatusRequest;
 import com.fahad.ApplicationTracker.entity.ApplicationStatus;
 import com.fahad.ApplicationTracker.entity.JobApplication;
+import com.fahad.ApplicationTracker.entity.Resume;
 import com.fahad.ApplicationTracker.entity.StatusCount;
 import com.fahad.ApplicationTracker.exception.ApplicationNotFoundException;
 import com.fahad.ApplicationTracker.repository.JobApplicationRepository;
@@ -29,7 +30,11 @@ public class JobApplicationService {
   @Autowired
   private JobApplicationRepository jobApplicationRepository;
 
+  @Autowired 
+  private InterviewPrepService interviewPrepService;
+
   public JobApplication createJobApplication(CreateJobApplication request) {
+    Resume mostRecentResume = interviewPrepService.fetchRecentResume();
     JobApplication application = new JobApplication();
 
     application.setCompanyName(request.companyName());
@@ -39,6 +44,7 @@ public class JobApplicationService {
     application.setSemester(request.semester());
     application.setNotes(request.notes());
     application.setStatus(request.status());
+    application.setResume(mostRecentResume);
 
     return jobApplicationRepository.save(application);
   }

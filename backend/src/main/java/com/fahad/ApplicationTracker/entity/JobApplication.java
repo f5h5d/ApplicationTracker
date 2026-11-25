@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -45,6 +47,10 @@ public class JobApplication {
   @Column(name = "notes", columnDefinition = "TEXT", nullable = true)
   private String notes;
 
+  @ManyToOne
+  @JoinColumn(name = "resume", nullable = true)
+  private Resume resume;
+
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
   private ApplicationStatus status = ApplicationStatus.SAVED;
@@ -67,6 +73,7 @@ public class JobApplication {
     String jobUrl,
     String notes,
     ApplicationStatus status,
+    Resume resume,
     Instant createdAt,
     Instant updatedAt
   ) {
@@ -77,6 +84,7 @@ public class JobApplication {
     this.jobUrl = jobUrl;
     this.notes = notes;
     this.status = status;
+    this.resume = resume;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
@@ -129,6 +137,10 @@ public class JobApplication {
     return notes;
   }
 
+  public Resume getResume() {
+    return resume;
+  }
+
   public void setNotes(String notes) {
     this.notes = notes;
   }
@@ -160,5 +172,8 @@ public class JobApplication {
   public void setSemester(String semester) {
     this.semester = semester;
   }
-  
+
+  public void setResume(Resume resume) {
+    this.resume = resume;
+  }
 }

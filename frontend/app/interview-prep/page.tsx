@@ -1,24 +1,50 @@
 "use client";
 
-import { ArrowUpRight, FileText, Sparkle } from "lucide-react";
+import { FileText, LoaderCircle, Sparkle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Navbar from "@/src/lib/components/Navbar";
 import { useSession } from "@/src/lib/login/queries";
-import { sampleApplications } from "../job-applications/components/sample-data";
-import tableStyles from "../job-applications/components/applications-table.module.css";
 import layoutStyles from "../job-applications/page.module.css";
+import ApplicationSelector from "./components/ApplicationSelector";
 import ResumeModal from "./components/ResumeModal";
-import SamplePrepPlan from "./components/SamplePrepPlan";
+import InterviewPrepPlan from "./components/InterviewPrepPlan";
 import styles from "./page.module.css";
+import { application } from "../job-applications/types";
+import { useCreateInterviewPrep } from "@/src/lib/interview-prep/mutations";
+import { useFetchInterviewPrep } from "@/src/lib/interview-prep/queries";
 
 export default function InterviewPrepPage() {
   const router = useRouter();
   const { data: hasSession, isLoading } = useSession();
-  const [application, setApplication] = useState(sampleApplications[0]);
   const [resume, setResume] = useState("");
   const [resumeOpen, setResumeOpen] = useState(false);
 
+  const [currentApplication, setCurrentApplication] = useState<application>({
+    id: 0,
+    companyName: "",
+    role: "",
+    jobUrl: "",
+    jobDescription: "",
+    status: "INTERVIEW",
+    semester: "",
+    deadline: "",
+    notes: "",
+    createdAt: "",
+    updatedAt: "",
+  });
+
+  console.log("Current application:", currentApplication);
+
+  const {
+    mutate: generateInterviewPrep,
+    isPending: isGeneratingInterviewPrep,
+  } = useCreateInterviewPrep(currentApplication.id);
+
+
+  const { data: prepPlan } = useFetchInterviewPrep(currentApplication.id);
+
+  console.log("prepplan", !!prepPlan);
   useEffect(() => {
     if (!isLoading && !hasSession) router.replace("/login");
   }, [hasSession, isLoading, router]);
@@ -35,43 +61,53 @@ export default function InterviewPrepPage() {
             <p>A focused prep plan for the role you’re working toward.</p>
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.resumeButton} aria-haspopup="dialog" onClick={() => setResumeOpen(true)}>
+            <button
+              type="button"
+              className={styles.resumeButton}
+              aria-haspopup="dialog"
+              onClick={() => setResumeOpen(true)}
+            >
               <FileText size={16} aria-hidden="true" />
-              {resume ? "Update resume" : "Add resume"}
+              Update resume
             </button>
-            <button type="button" className={styles.generateButton} disabled title="Prep generation is unavailable in the sample preview">
-              <Sparkle size={18} aria-hidden="true" /> Generate prep
+            <button
+              type="button"
+              className={styles.generateButton}
+              disabled={
+                !currentApplication.id ||
+                isGeneratingInterviewPrep ||
+                !!prepPlan // disable if prep plan already exists
+                
+              }
+              aria-busy={isGeneratingInterviewPrep}
+              onClick={() => generateInterviewPrep()}
+            >
+              {isGeneratingInterviewPrep ? (
+                <>
+                  <LoaderCircle
+                    className="motion-safe:animate-spin"
+                    size={18}
+                    aria-hidden="true"
+                  />
+                  Generating…
+                </>
+              ) : (
+                <>
+                  <Sparkle size={18} aria-hidden="true" /> Generate prep
+                </>
+              )}
             </button>
           </div>
         </header>
-        <section className={styles.applicationCard} aria-label="Application details">
-          <div className={styles.applicationField}>
-            <label htmlFor="prep-application">Application</label>
-            <select
-              id="prep-application"
-              value={application.company}
-              onChange={(event) => {
-                const selected = sampleApplications.find((item) => item.company === event.target.value);
-                if (selected) setApplication(selected);
-              }}
-            >
-              {sampleApplications.map((item) => (
-                <option key={item.company} value={item.company}>{item.company} · {item.role}</option>
-              ))}
-            </select>
-            <p className={styles.metadata}>
-              {application.semester}
-              <span aria-hidden="true">·</span>
-              <span className={`${styles.status} ${tableStyles[application.appearance]}`}>{application.status}</span>
-              <span aria-hidden="true">·</span>
-              Saved {application.added}, 2026
-            </p>
-          </div>
-          <button type="button" className={styles.postingButton} disabled title="This sample application has no posting link">
-            Open posting <ArrowUpRight size={15} aria-hidden="true" />
-          </button>
-        </section>
-        <SamplePrepPlan />
+        <ApplicationSelector
+          currentApplication={currentApplication}
+          setCurrentApplication={setCurrentApplication}
+          isGeneratingInterviewPrep={isGeneratingInterviewPrep}
+        />
+        <InterviewPrepPlan
+          applicationId={currentApplication.id}
+          isGeneratingInterviewPrep={isGeneratingInterviewPrep}
+        />
       </main>
       {resumeOpen && (
         <ResumeModal

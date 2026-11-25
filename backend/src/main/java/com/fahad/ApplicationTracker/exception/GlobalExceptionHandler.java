@@ -14,6 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
+
   // used to log errors
   private static final Logger log = LoggerFactory.getLogger(
     GlobalExceptionHandler.class
@@ -22,6 +23,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(ApplicationNotFoundException.class)
   public ResponseEntity<String> handleNotFound(
     ApplicationNotFoundException exception
+  ) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+      exception.getMessage()
+    );
+  }
+
+  @ExceptionHandler(ResumeNotFoundException.class)
+  public ResponseEntity<String> handleNotFound(
+    ResumeNotFoundException exception
   ) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
       exception.getMessage()
