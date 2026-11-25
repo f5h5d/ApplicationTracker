@@ -29,15 +29,6 @@ export const login = async (
       },
     },
   );
-
-  // console.log("Login response:", response);
-
-  // if (!response.ok) {
-  //   const errorData = await response.json();
-  //   throw new Error(errorData.message || "Login failed");
-  // }
-
-  // return response.json();
 };
 
 export const fetchCsrfToken = async () => {
@@ -66,7 +57,7 @@ export const logout = async (csrf: csrf) => {
 };
 
 export const fetchSession = async () => {
-  const response = await axios.get("http://localhost:8080/api/session", {
+  const response = await axios.get<boolean>("http://localhost:8080/api/session", {
     withCredentials: true,
   });
 

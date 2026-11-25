@@ -1,7 +1,7 @@
 import type { application } from "@/app/job-applications/types";
 import { csrf } from "@/app/login/types";
 import axios from "axios";
-import { interviewPrep } from "./types";
+import type { InterviewPrep } from "./types";
 
 const api = axios.create({
   baseURL: "http://localhost:8080",
@@ -55,14 +55,10 @@ export const addInterviewPrep = async (id: number, csrf: csrf) => {
     },
   );
 
-  console.log(response.data);
-
   return response.data;
 };
 
-export const fetchInterviewPrep = async (
-  id: number,
-): Promise<interviewPrep> => {
-  const response = await api.get(`/api/interview-prep/${id}`);
-  return response.data;
+export const fetchInterviewPrep = async (id: number) => {
+  const response = await api.get<InterviewPrep | "" | null>(`/api/interview-prep/${id}`);
+  return response.data || null;
 };

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import { ArrowUpRight, Eye, EyeOff } from "lucide-react";
 import styles from "./page.module.css";
 import { useLogin } from "@/src/lib/login/mutations";
@@ -10,7 +11,6 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const PasswordIcon = showPassword ? EyeOff : Eye;
 
   const [credentials, setCredentials] = useState({
@@ -18,7 +18,7 @@ export default function LoginPage() {
     password: "",
   });
 
-  const { mutate: login, isPending: isLoggingIn } = useLogin();
+  const { mutate: login, isPending: isLoggingIn, error, reset } = useLogin();
   const { isFetching: isFetchingCsrfToken } = useCsrf();
 
   const { data: hasSession, isLoading: isLoadingHasSession } = useSession();
@@ -43,14 +43,9 @@ export default function LoginPage() {
           <form
             className={styles.form}
             method="post"
-            onChange={() => setSubmitted(false)}
+            onChange={() => { if (error) reset(); }}
             onSubmit={(event) => {
               event.preventDefault();
-              if (!credentials.username || !credentials.password) {
-                setSubmitted(true);
-                return;
-              }
-
               login(credentials);
             }}
           >
@@ -104,13 +99,15 @@ export default function LoginPage() {
             <button
               className={styles.submit}
               type="submit"
-              disabled={isFetchingCsrfToken}
+              disabled={isFetchingCsrfToken || isLoggingIn}
             >
-              Sign in
+              {isLoggingIn ? "Signing in…" : "Sign in"}
             </button>
-            {submitted && (
-              <p className={styles.notice} role="status">
-                Sign-in is not connected to this form yet.
+            {error && (
+              <p className={styles.notice} role="alert">
+                {isAxiosError(error) && error.response?.status === 401
+                  ? "Incorrect username or password."
+                  : "Couldn’t sign in. Please try again."}
               </p>
             )}
           </form>

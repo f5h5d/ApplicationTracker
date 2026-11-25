@@ -1,17 +1,19 @@
-import { application } from "@/app/job-applications/types";
+import type { application } from "@/app/job-applications/types";
 
-type planPoint = {
+export type PlanPoint = {
   header: string;
   description: string;
 };
-export type interviewPrep = {
+export type PrepPlan = {
+  practiceQuestions: PlanPoint[];
+  talkingPoints: PlanPoint[];
+  topicsToReview: PlanPoint[];
+};
+
+export type InterviewPrep = {
   id: number;
   createdAt: string;
   updatedAt: string;
-  interviewPrep: {
-    practiceQuestions: planPoint[];
-    talkingPoints: planPoint[];
-    topicsToReview: planPoint[];
-  };
+  interviewPrep: PrepPlan;
   application: application;
-} | null;
+};

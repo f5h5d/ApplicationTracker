@@ -18,6 +18,7 @@ export const useAddJobApplication = () => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["job-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["interviewing-applications"] });
       queryClient.invalidateQueries({
         queryKey: ["job-applications-overview"],
       });
@@ -25,16 +26,17 @@ export const useAddJobApplication = () => {
   });
 };
 
-export const useDeleteJobApplication = (applicationId: number) => {
+export const useDeleteJobApplication = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["delete-job-application"],
-    mutationFn: async () => {
+    mutationFn: async (applicationId: number) => {
       const csrf = await getCsrfToken(queryClient);
       await deleteJobApplication(applicationId, csrf);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["job-applications"] });
+      queryClient.invalidateQueries({ queryKey: ["interviewing-applications"] });
       queryClient.invalidateQueries({
         queryKey: ["job-applications-overview"],
       });
